@@ -1,5 +1,236 @@
 <!DOCTYPE html>
-<html>
-<head><meta charset="utf-8"><title>My Page</title></head>
-<body><h1>公開成功</h1><p>HTTPSで接続されています。</p></body>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>経済データ分析レポート | 官製マネー、米に集中加速</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --secondary: #0284c7;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      line-height: 1.7;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: white;
+      border-bottom: 1px solid var(--border);
+      padding: 1.5rem 1rem;
+      text-align: center;
+    }
+    .badge {
+      display: inline-block;
+      background: #e0f2fe;
+      color: #0369a1;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    h1 {
+      font-size: 1.8rem;
+      margin: 0.5rem 0;
+      color: #0f172a;
+    }
+    .date {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+    main {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    .card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 1.75rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      border: 1px solid var(--border);
+    }
+    h2 {
+      font-size: 1.3rem;
+      margin-top: 0;
+      color: var(--primary);
+      border-left: 4px solid var(--secondary);
+      padding-left: 0.75rem;
+    }
+    p {
+      margin-bottom: 1rem;
+    }
+    .chart-container {
+      position: relative;
+      margin: 1.5rem 0;
+      height: 360px;
+    }
+    .source {
+      text-align: right;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    .highlight-box {
+      background: #eff6ff;
+      border-left: 4px solid #3b82f6;
+      padding: 1rem 1.25rem;
+      border-radius: 4px;
+      margin: 1.5rem 0;
+    }
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <span class="badge">経済・グローバル投資分析</span>
+    <h1>官製マネー、米に集中加速</h1>
+    <p class="date">データ出典：2026年9月13日付 朝刊 / 分析アーカイブ</p>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>1. AI覇権を巡る「官製マネー」の北米シフト</h2>
+      <p>
+        世界各国の政府系ファンド（SWF）による投資マネーが、米国を中心とする北米地域へ急速に集中しています。
+        背景にあるのは、生成AI開発競争に伴うデータセンターや半導体基盤など「AIインフラ」への巨額投資需要です。
+      </p>
+      
+      <div class="highlight-box">
+        <strong>ポイント：</strong> 全体に占める北米の投資割合はかつて20〜30%前後で推移していましたが、2025年以降に急伸し、全体の約半数に達する勢いを見せています。中東などの政府系投資家（MGXなど）も米国の「スターゲート計画」等の大型AIインフラプロジェクトへ巨額出資を実行しています。
+      </div>
+
+      <div class="chart-container">
+        <canvas id="swfChart"></canvas>
+      </div>
+      <p class="source">出所：グローバルSWF（データ推計値）</p>
+    </section>
+
+    <section class="card">
+      <h2>2. 中国への直接投資の減速と対外シフト</h2>
+      <p>
+        一方で、かつて世界の投資資金を集めていた中国市場への直接投資は急激に落ち込んでいます。
+        地政学リスクの高まりやサプライチェーンの見直しを背景に、対内投資は大幅に縮小する一方、中国企業側による対外投資も慎重な動きが続いています。
+      </p>
+
+      <div class="chart-container">
+        <canvas id="fdiChart"></canvas>
+      </div>
+      <p class="source">出所：中国国家外貨管理局（データ推計値）</p>
+    </section>
+
+    <section class="card">
+      <h2>3. 考察と今後の示唆</h2>
+      <ul>
+        <li><strong>AIへの資本偏重：</strong> 生成AIの進化スピードと所要資本が膨大化した結果、官民のマネーが米国のトッププレイヤー（OpenAI、Anthropic、ハイパースケーラー）に吸い寄せられています。</li>
+        <li><strong>新興国の低迷：</strong> これまで投資先の主役であった中国やインドなど新興国への配分が相対的に低下しており、マネーの「一極集中」が進んでいます。</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Economic & Tech Investment Analytics. Built with GitHub Pages.</p>
+  </footer>
+
+  <script>
+    // グラフ1: 地域別政府系投資の推移
+    const ctx1 = document.getElementById('swfChart').getContext('2d');
+    new Chart(ctx1, {
+      type: 'bar',
+      data: {
+        labels: ['2018年', '2019年', '2020年', '2021年', '2022年', '2023年', '2024年', '2025年', '2026年(1-6月)'],
+        datasets: [
+          {
+            type: 'line',
+            label: '北米の割合 (%)',
+            data: [32, 28, 30, 31, 26, 33, 34, 49, 58],
+            borderColor: '#0f172a',
+            borderWidth: 2,
+            yAxisID: 'y1',
+            fill: false,
+            tension: 0.2
+          },
+          {
+            label: '北米 (億ドル)',
+            data: [420, 380, 450, 480, 430, 620, 680, 1150, 720],
+            backgroundColor: '#1e3a8a'
+          },
+          {
+            label: '欧州 (億ドル)',
+            data: [310, 290, 320, 350, 340, 420, 410, 430, 230],
+            backgroundColor: '#0284c7'
+          },
+          {
+            label: 'アジア太平洋 (億ドル)',
+            data: [250, 210, 260, 280, 290, 310, 330, 300, 160],
+            backgroundColor: '#94a3b8'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: { display: true, text: '投資額（億ドル）' }
+          },
+          y1: {
+            position: 'right',
+            beginAtZero: true,
+            max: 70,
+            grid: { drawOnChartArea: false },
+            title: { display: true, text: '北米比率 (%)' }
+          }
+        }
+      }
+    });
+
+    // グラフ2: 中国への直接投資推移
+    const ctx2 = document.getElementById('fdiChart').getContext('2d');
+    new Chart(ctx2, {
+      type: 'bar',
+      data: {
+        labels: ['2000年', '2005年', '2010年', '2015年', '2020年', '2021年', '2022年', '2023年', '2024年', '2025年'],
+        datasets: [
+          {
+            label: '対内投資 (億ドル)',
+            data: [400, 720, 1850, 2400, 2100, 3400, 1800, 330, 150, 80],
+            backgroundColor: '#991b1b'
+          },
+          {
+            label: '対外投資 (億ドル)',
+            data: [-20, -120, -680, -1450, -1530, -1780, -1490, -1200, -1100, -950],
+            backgroundColor: '#64748b'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            title: { display: true, text: '金額（億ドル）' }
+          }
+        }
+      }
+    });
+  </script>
+</body>
 </html>
