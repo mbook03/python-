@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>経済データ＆AIノート</title>
+  <title>AI日記｜Ad Meliora - AIと世界を、よりよく。</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -23,8 +23,28 @@
       top: 0;
       z-index: 100;
     }
-    .site-title { font-size: 20px; font-weight: bold; letter-spacing: 1px; color: #222; text-decoration: none; }
-    .header-date { font-size: 14px; font-weight: bold; color: #d9534f; }
+    .site-brand {
+      display: flex;
+      flex-direction: column;
+      text-decoration: none;
+    }
+    .site-title {
+      font-size: 20px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      color: #222;
+    }
+    .site-tagline {
+      font-size: 11px;
+      color: #777;
+      letter-spacing: 0.5px;
+      margin-top: 2px;
+    }
+    .header-date {
+      font-size: 14px;
+      font-weight: bold;
+      color: #d9534f;
+    }
 
     .container {
       max-width: 1100px;
@@ -33,12 +53,11 @@
       display: flex;
       gap: 40px;
     }
-    /* 左側サイドバー */
     .sidebar {
       width: 280px;
       flex-shrink: 0;
       position: sticky;
-      top: 80px;
+      top: 90px;
       height: fit-content;
     }
     .sidebar-title {
@@ -85,7 +104,6 @@
       padding-left: 8px;
     }
 
-    /* 右側メインエリア */
     .content {
       flex: 1;
       background: #fff;
@@ -126,12 +144,14 @@
 </head>
 <body>
   <header>
-    <a href="./index.html" class="site-title">経済データ＆AIノート</a>
+    <a href="./index.html" class="site-brand">
+      <span class="site-title">AI日記｜Ad Meliora</span>
+      <span class="site-tagline">AIと世界を、よりよく。</span>
+    </a>
     <div class="header-date">🍁 9/23 水</div>
   </header>
 
   <div class="container">
-    <!-- 左側サイドバー（インデックス） -->
     <aside class="sidebar">
       <div class="sidebar-title">過去の日記・レポート</div>
 
@@ -145,14 +165,12 @@
       <div class="post-item">
         <span class="post-date">09月20日（日）</span>
         <button id="btn-0920" class="sidebar-btn" onclick="switchPost('0920')">
-          経済データ分析レポート | 官製マネー、米に集中加速
+          官製マネー、米に集中加速
         </button>
       </div>
     </aside>
 
-    <!-- 右側メインコンテンツ（切り替わる記事エリア） -->
     <main class="content">
-      <!-- 9月23日の記事パネル -->
       <article id="panel-0923" class="post-panel active">
         <div class="article-header">
           <span class="date-badge">09月23日（水）</span>
@@ -273,7 +291,6 @@
 <p>データセンターに流れる巨額のマネーを単なる「AIブームの一部」として捉えるのではなく、<strong>「エネルギー・地政学・国家インフラが一体となった構造的変化」</strong>として捉えること。これこそが、激変する世界経済の中で真の勝者を見極めるための羅針盤となるでしょう。</p>
       </article>
 
-      <!-- 9月20日の記事パネル（完全な本文） -->
       <article id="panel-0920" class="post-panel">
         
 <div class="article-header">
@@ -362,12 +379,9 @@ AIの中心は米国にあり、巨大な製造能力は中国にあり、半導
 
   <script>
     function switchPost(dateStr) {
-      // 全パネルを非表示
       document.querySelectorAll('.post-panel').forEach(p => p.classList.remove('active'));
-      // 全ボタンのアクティブ解除
       document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
 
-      // 該当パネルとボタンを表示
       const targetPanel = document.getElementById('panel-' + dateStr);
       const targetBtn = document.getElementById('btn-' + dateStr);
       if (targetPanel && targetBtn) {
