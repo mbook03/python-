@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>経済・データ分析ブログ</title>
+  <title>経済データ＆AIノート</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; } /* スムーズスクロール有効化 */
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
       background-color: #fbfbf8;
@@ -19,6 +20,9 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
     .site-title { font-size: 20px; font-weight: bold; letter-spacing: 1px; color: #222; text-decoration: none; }
     .header-date { font-size: 14px; font-weight: bold; color: #d9534f; }
@@ -30,10 +34,13 @@
       display: flex;
       gap: 40px;
     }
-    /* 左側：日毎のブログ一覧（サイドバー） */
+    /* 左側：サイドバー */
     .sidebar {
       width: 280px;
       flex-shrink: 0;
+      position: sticky;
+      top: 80px;
+      height: fit-content;
     }
     .sidebar-title {
       font-size: 14px;
@@ -56,16 +63,20 @@
       margin-bottom: 4px;
     }
     .post-link {
-      color: #333;
+      color: #555;
       text-decoration: none;
       font-size: 14px;
-      font-weight: 500;
+      font-weight: normal;
       line-height: 1.5;
+      display: block;
+      padding: 4px 6px;
+      border-radius: 4px;
+      transition: background-color 0.2s, color 0.2s;
     }
-    .post-link:hover { color: #0066cc; text-decoration: underline; }
-    .post-link.active { font-weight: bold; color: #111; }
+    .post-link:hover { color: #0066cc; background: #eee; }
+    .post-link.active { font-weight: bold; color: #111; background: #e8e8e3; }
 
-    /* 右側：記事本文（メインコンテンツ） */
+    /* 右側：記事本文エリア */
     .content {
       flex: 1;
       background: #fff;
@@ -74,10 +85,13 @@
       border: 1px solid #eaeaea;
       box-shadow: 0 2px 5px rgba(0,0,0,0.02);
     }
+    article {
+      scroll-margin-top: 90px; /* ヘッダー分上に余白を持たせて綺麗に止める */
+    }
     .article-header {
-      margin-bottom: 30px;
+      margin-bottom: 20px;
       border-bottom: 1px solid #eee;
-      padding-bottom: 16px;
+      padding-bottom: 12px;
     }
     .article-header .date-badge {
       font-size: 13px;
@@ -95,7 +109,7 @@
 
     @media (max-width: 768px) {
       .container { flex-direction: column; }
-      .sidebar { width: 100%; }
+      .sidebar { width: 100%; position: static; }
       .content { padding: 20px; }
     }
   </style>
@@ -107,22 +121,22 @@
   </header>
 
   <div class="container">
-    <!-- 左側：日毎のブログ一覧 -->
+    <!-- 左側サイドバー -->
     <aside class="sidebar">
       <div class="sidebar-title">過去の日記・レポート</div>
 
       <div class="post-item">
         <span class="post-date">09月23日（水）</span>
-        <a href="#post-0923" class="post-link active">【マネーの大移動】なぜ世界中の富は「米国のデータセンター」に殺到するのか？</a>
+        <a href="#post-0923" class="post-link active" onclick="activateLink(this)">【マネーの大移動】なぜ世界中の富は「米国のデータセンター」に殺到するのか？</a>
       </div>
 
       <div class="post-item">
         <span class="post-date">09月20日（日）</span>
-        <a href="#post-0920" class="post-link">経済データ分析レポート | 官製マネー、米に集中加速</a>
+        <a href="#post-0920" class="post-link" onclick="activateLink(this)">経済データ分析レポート | 官製マネー、米に集中加速</a>
       </div>
     </aside>
 
-    <!-- 右側：メイン記事本文 -->
+    <!-- 右側メインコンテンツ -->
     <main class="content">
       <!-- 9月23日の記事 -->
       <article id="post-0923">
@@ -245,7 +259,7 @@
 <p>データセンターに流れる巨額のマネーを単なる「AIブームの一部」として捉えるのではなく、<strong>「エネルギー・地政学・国家インフラが一体となった構造的変化」</strong>として捉えること。これこそが、激変する世界経済の中で真の勝者を見極めるための羅針盤となるでしょう。</p>
       </article>
 
-      <hr style="margin: 50px 0; border: none; border-top: 1px dashed #ccc;">
+      <hr style="margin: 60px 0; border: none; border-top: 2px dashed #ddd;">
 
       <!-- 9月20日の記事 -->
       <article id="post-0920">
@@ -254,9 +268,16 @@
         </div>
         <h1>経済データ分析レポート | 官製マネー、米に集中加速</h1>
         <p>米国のハイテク・先端インフラ領域において、官民双方の資金流入が前例のない規模で拡大を続けています。中国をはじめとする各国経済の構造転換と、米国市場における設備投資競争の最新動向をまとめました。</p>
-        <p style="font-size: 13px; color: #666;">（※以前作成したレポートのアーカイブです）</p>
+        <p>（※以前作成したレポートのアーカイブです）</p>
       </article>
     </main>
   </div>
+
+  <script>
+    function activateLink(element) {
+      document.querySelectorAll('.post-link').forEach(link => link.classList.remove('active'));
+      element.classList.add('active');
+    }
+  </script>
 </body>
 </html>
