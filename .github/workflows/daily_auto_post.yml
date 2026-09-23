@@ -1,1 +1,35 @@
+name: Daily Auto Blog Pipeline
 
+on:
+  schedule:
+    # 毎日 UTC 21:00（日本時間 午前6:00）に自動実行
+    - cron: '0 21 * * *'
+  workflow_dispatch: # 手動でテスト実行できるボタンを有効化
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - name: リポジトリのチェックアウト
+        uses: actions/checkout@v4
+
+      - name: Python環境のセットアップ
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: 依存ライブラリのインストール
+        run: |
+          pip install requests markdown beautifulsoup4 google-cloud-bigquery google-genai pandas pyarrow
+
+      - name: Google Cloud 認証
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: パイプライン実行
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python daily_pipeline.py
