@@ -6,7 +6,7 @@
   <title>経済データ＆AIノート</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; } /* スムーズスクロール有効化 */
+    html { scroll-behavior: smooth; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
       background-color: #fbfbf8;
@@ -34,7 +34,6 @@
       display: flex;
       gap: 40px;
     }
-    /* 左側：サイドバー */
     .sidebar {
       width: 280px;
       flex-shrink: 0;
@@ -66,17 +65,15 @@
       color: #555;
       text-decoration: none;
       font-size: 14px;
-      font-weight: normal;
       line-height: 1.5;
       display: block;
-      padding: 4px 6px;
+      padding: 6px 8px;
       border-radius: 4px;
       transition: background-color 0.2s, color 0.2s;
     }
     .post-link:hover { color: #0066cc; background: #eee; }
     .post-link.active { font-weight: bold; color: #111; background: #e8e8e3; }
 
-    /* 右側：記事本文エリア */
     .content {
       flex: 1;
       background: #fff;
@@ -86,7 +83,7 @@
       box-shadow: 0 2px 5px rgba(0,0,0,0.02);
     }
     article {
-      scroll-margin-top: 90px; /* ヘッダー分上に余白を持たせて綺麗に止める */
+      scroll-margin-top: 90px;
     }
     .article-header {
       margin-bottom: 20px;
@@ -100,7 +97,7 @@
       display: block;
       margin-bottom: 6px;
     }
-    .content h1 { font-size: 24px; margin-bottom: 16px; color: #111; line-height: 1.4; }
+    .content h1 { font-size: 24px; margin-bottom: 18px; color: #111; line-height: 1.4; }
     .content h2 { font-size: 20px; margin: 32px 0 14px; border-left: 4px solid #c94a29; padding-left: 10px; }
     .content h3 { font-size: 16px; margin: 24px 0 10px; color: #444; }
     .content p { margin-bottom: 16px; font-size: 15px; }
@@ -121,7 +118,6 @@
   </header>
 
   <div class="container">
-    <!-- 左側サイドバー -->
     <aside class="sidebar">
       <div class="sidebar-title">過去の日記・レポート</div>
       
@@ -136,7 +132,6 @@
       </div>
     </aside>
 
-    <!-- 右側メインコンテンツ -->
     <main class="content">
       <!-- 9月23日の記事 -->
       <article id="post-0923">
@@ -261,14 +256,43 @@
 
       <hr style="margin: 60px 0; border: none; border-top: 2px dashed #ddd;">
 
-      <!-- 9月20日の記事 -->
+      <!-- 9月20日の記事（詳細な本文入り） -->
       <article id="post-0920">
         <div class="article-header">
           <span class="date-badge">09月20日（日）</span>
         </div>
-        <h1>経済データ分析レポート | 官製マネー、米に集中加速</h1>
-        <p>米国のハイテク・先端インフラ領域において、官民双方の資金流入が前例のない規模で拡大を続けています。中国をはじめとする各国経済の構造転換と、米国市場における設備投資競争の最新動向をまとめました。</p>
-        <p>（※以前作成したレポートのアーカイブです）</p>
+        
+<h1>経済データ分析レポート | 官製マネー、米に集中加速</h1>
+
+<div style="border-left: 4px solid #1a56db; padding-left: 12px; margin: 24px 0 16px;">
+  <h2 style="margin: 0; font-size: 19px; color: #1e3a8a; border: none; padding: 0;">1. AI覇権を巡る「官製マネー」の北米シフト</h2>
+</div>
+
+<p>世界各国の政府系ファンド（SWF）による投資マネーが、米国を中心とする北米地域へ急速に集中しています。背景にあるのは、生成AI開発競争に伴うデータセンターや半導体基盤など「AIインフラ」への巨額投資需要です。</p>
+
+<div style="background-color: #f0f7ff; border: 1px solid #bfdbfe; border-left: 5px solid #2563eb; padding: 16px 20px; border-radius: 4px; margin: 20px 0;">
+  <p style="margin: 0; font-size: 14.5px; line-height: 1.8;">
+    <strong>ポイント：</strong> 全体に占める北米の投資割合はかつて20〜30%前後で推移していましたが、2025年以降に急伸し、全体の約半数に達する勢いを見せています。中東などの政府系投資家（MGXなど）も米国の「スターゲート計画」等の大型AIインフラプロジェクトへ巨額出資を実行しています。
+  </p>
+</div>
+
+<div style="background-color: #fef2f2; border: 1px solid #fecaca; border-left: 5px solid #dc2626; padding: 20px; border-radius: 6px; margin: 25px 0;">
+  <h3 style="margin-top: 0; color: #991b1b; font-size: 16px;">【一般市民が被る影響：AIバブルの闇と生活へのしわ寄せ】</h3>
+  <p style="font-size: 14.5px; line-height: 1.8; margin-bottom: 12px;">
+    米国の巨大テックや国際資本が主導するAIインフラへの過剰な投資熱は、遠い海の向こうの先端技術競争にとどまりません。その裏では、一般市民の毎日の生活コストを静かに押し上げる「見えない増税」とも言える構造的な負担が発生しています。
+  </p>
+  <ul style="margin: 10px 0 0 20px; font-size: 14.5px;">
+    <li style="margin-bottom: 10px;">
+      <a href="#post-0923" style="color: #2563eb; text-decoration: underline;" onclick="activateLink(document.querySelectorAll('.post-link')[0])">
+        2026-09-23 - 【マネーの大移動】なぜ世界中の富は「米国のデータセンター」に殺到するのか？AIインフラバブルの正体
+      </a>
+    </li>
+    <li>
+      <strong>家計を直撃する電気代の高騰（エネルギーの買い負け）：</strong> 巨大データセンター群を24時間動かし続けるため、米国では天然ガス火力発電の需要が激増しています。これにより世界の燃料市場（LNG）価格が跳ね上がり、火力燃料のほとんどを輸入に頼る日本などの一般家庭の電気代に直接転嫁されるリスクを孕んでいます。
+    </li>
+  </ul>
+</div>
+
       </article>
     </main>
   </div>
