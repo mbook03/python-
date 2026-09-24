@@ -152,17 +152,21 @@
   </header>
 
   <div class="container">
-    <aside class="sidebar">
+  <aside class="sidebar">
       <div class="sidebar-title">過去の日記・レポート</div>
-　　　 <div class="post-item">
+      
+      <!-- ★追加した9月24日分（activeを付ける） -->
+      <div class="post-item">
         <span class="post-date">09月24日（木）</span>
         <button id="btn-0924" class="sidebar-btn active" onclick="switchPost('0924')">
-          ここにコピーした9月24日の記事タイトルを貼り付け
+          （※ここに実際の9月24日の記事タイトルを入れる）
         </button>
       </div>
+
+      <!-- ★元からある9月23日分（activeを消す） -->
       <div class="post-item">
         <span class="post-date">09月23日（水）</span>
-        <button id="btn-0923" class="sidebar-btn active" onclick="switchPost('0923')">
+        <button id="btn-0923" class="sidebar-btn" onclick="switchPost('0923')">
           【マネーの大移動】なぜ世界中の富は「米国のデータセンター」に殺到するのか？
         </button>
       </div>
