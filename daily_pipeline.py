@@ -1,13 +1,13 @@
-# daily_pipeline.py
-import base64
-from collections import Counter
-from datetime import datetime, timezone
 import os
 import re
-from google import genai
-from google.cloud import bigquery
+import time
+import base64
+from datetime import datetime, timezone
+from collections import Counter
 import markdown
 import requests
+from google import genai
+from google.cloud import bigquery
 
 REPO_OWNER = "mbook03"
 REPO_NAME = "python-"
@@ -49,16 +49,12 @@ ORDER BY
   pv_count DESC
 LIMIT 1
 """
-df_top = bq_client.query(query).to_dataframe()
-top_post = (
-    df_top.iloc[0]
-    if len(df_top) > 0
-    else {
-        "title": "データ分析",
-        "content": "データ 経済 マネー 米国 インフラ",
-        "char_count": 3000,
-    }
-)
+try:
+    df_top = bq_client.query(query).to_dataframe()
+    top_post = df_top.iloc[0] if len(df_top) > 0 else {"title": "データ分析", "content": "データ 経済 マネー 米国 インフラ", "char_count": 3000}
+except Exception as e:
+    print(f"BigQueryクエリ警告: {e}")
+    top_post = {"title": "データ分析", "content": "データ 経済 マネー 米国 インフラ", "char_count": 3000}
 
 # キーワード抽出
 text = str(top_post["content"])
@@ -69,7 +65,7 @@ top_keywords = [w[0] for w in Counter(filtered_words).most_common(5)]
 if not top_keywords:
     top_keywords = ["経済", "テクノロジー", "マネー"]
 
-# --- 2. Gemini API で新着記事を執筆 ---
+# --- 2. Gemini API で新着記事を執筆（リトライ機構付き） ---
 ai_client = genai.Client(api_key=GEMINI_API_KEY)
 prompt = f"""
 あなたはWebマーケティングとSEOに精通した経済・テックブロガーです。
@@ -84,10 +80,24 @@ prompt = f"""
 - 読者を飽きさせないように適宜リストや強調を使用
 """
 
-res = ai_client.models.generate_content(
-    model="gemini-3.6-flash", contents=prompt
-)
-article_md = res.text
+# 混雑時（503）に備えて最大3回リトライ
+article_md = None
+for attempt in range(1, 4):
+    try:
+        print(f"Gemini API 呼び出し試行 {attempt}/3...")
+        res = ai_client.models.generate_content(
+            model="gemini-3.6-flash",
+            contents=prompt
+        )
+        article_md = res.text
+        print("記事生成成功！")
+        break
+    except Exception as e:
+        print(f"試行 {attempt} 失敗: {e}")
+        if attempt < 3:
+            time.sleep(10)  # 10秒待機して再試行
+        else:
+            raise e
 
 # --- 3. Markdown記事をリポジトリへ新規コミット ---
 now_utc = datetime.now(timezone.utc)
@@ -104,4 +114,4 @@ if get_res.status_code == 200:
     payload["sha"] = get_res.json()["sha"]
 
 put_res = requests.put(file_url, headers=headers, json=payload)
-print(f"記事コミット結果: {put_res.status_code}")
+print(f"記事コミット結果ステータス: {put_res.status_code}")
