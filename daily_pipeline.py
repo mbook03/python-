@@ -65,7 +65,7 @@ top_keywords = [w[0] for w in Counter(filtered_words).most_common(5)]
 if not top_keywords:
     top_keywords = ["経済", "テクノロジー", "マネー"]
 
-# --- 2. Gemini API で新着記事を執筆（リトライ機構付き） ---
+# --- 2. Gemini API で新着記事を執筆（503対策：モデル自動切替＋リトライ） ---
 ai_client = genai.Client(api_key=GEMINI_API_KEY)
 prompt = f"""
 あなたはWebマーケティングとSEOに精通した経済・テックブロガーです。
@@ -80,24 +80,28 @@ prompt = f"""
 - 読者を飽きさせないように適宜リストや強調を使用
 """
 
-# 混雑時（503）に備えて最大3回リトライ
+candidate_models = ["gemini-3.6-flash", "gemini-2.5-flash", "gemini-2.0-flash"]
 article_md = None
-for attempt in range(1, 4):
-    try:
-        print(f"Gemini API 呼び出し試行 {attempt}/3...")
-        res = ai_client.models.generate_content(
-            model="gemini-3.6-flash",
-            contents=prompt
-        )
-        article_md = res.text
-        print("記事生成成功！")
+
+for m in candidate_models:
+    for attempt in range(1, 3):
+        try:
+            print(f"モデル '{m}' 呼び出し試行 {attempt}/2...")
+            res = ai_client.models.generate_content(
+                model=m,
+                contents=prompt
+            )
+            article_md = res.text
+            print(f"記事生成成功！（使用モデル: {m}）")
+            break
+        except Exception as e:
+            print(f"モデル '{m}' 試行 {attempt} 失敗: {e}")
+            time.sleep(5)
+    if article_md:
         break
-    except Exception as e:
-        print(f"試行 {attempt} 失敗: {e}")
-        if attempt < 3:
-            time.sleep(10)  # 10秒待機して再試行
-        else:
-            raise e
+
+if not article_md:
+    raise RuntimeError("全モデルにおいてAPI一時エラー（混雑）のため記事生成に失敗しました。")
 
 # --- 3. Markdown記事をリポジトリへ新規コミット ---
 now_utc = datetime.now(timezone.utc)
@@ -109,6 +113,7 @@ get_res = requests.get(file_url, headers=headers)
 payload = {
     "message": f"feat: daily auto post {file_name}",
     "content": base64.b64encode(article_md.encode("utf-8")).decode("utf-8"),
+    "branch": "main",
 }
 if get_res.status_code == 200:
     payload["sha"] = get_res.json()["sha"]
