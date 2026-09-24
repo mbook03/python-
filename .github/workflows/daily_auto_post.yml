@@ -4,7 +4,7 @@ on:
   schedule:
     # 毎日 UTC 21:00（日本時間 午前6:00）に自動実行
     - cron: '0 21 * * *'
-  workflow_dispatch: # 手動でテスト実行できるボタンを有効化
+  workflow_dispatch:
 
 jobs:
   run-pipeline:
@@ -20,7 +20,7 @@ jobs:
 
       - name: 依存ライブラリのインストール
         run: |
-          pip install requests markdown beautifulsoup4 google-cloud-bigquery google-genai pandas pyarrow
+          pip install requests markdown beautifulsoup4 google-cloud-bigquery google-genai pandas pyarrow db-dtypes
 
       - name: Google Cloud 認証
         uses: google-github-actions/auth@v2
