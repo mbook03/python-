@@ -77,7 +77,7 @@ top_keywords = [w[0] for w in Counter(filtered_words).most_common(5)]
 if not top_keywords:
     top_keywords = ["経済", "テクノロジー", "マネー"]
 
-# --- 2. Gemini API で新着記事を執筆（混雑リトライ対応） ---
+# --- 2. Gemini API で新着記事を執筆（最新モデル gemini-3.8-flash） ---
 ai_client = genai.Client(api_key=GEMINI_API_KEY)
 prompt = f"""
 あなたはWebマーケティングとSEOに精通した経済・テックブロガーです。
@@ -92,13 +92,13 @@ prompt = f"""
 - 読者を飽きさせないように適宜リストや強調を使用
 """
 
-candidate_models = ["gemini-2.5-flash", "gemini-2.0-flash"]
+candidate_models = ["gemini-3.8-flash"]
 article_md = None
 
 for m in candidate_models:
-    for attempt in range(1, 3):
+    for attempt in range(1, 4):
         try:
-            print(f"モデル '{m}' 呼び出し試行 {attempt}/2...")
+            print(f"モデル '{m}' 呼び出し試行 {attempt}/3...")
             res = ai_client.models.generate_content(model=m, contents=prompt)
             article_md = res.text
             print(f"記事生成成功！（使用モデル: {m}）")
@@ -110,9 +110,7 @@ for m in candidate_models:
         break
 
 if not article_md:
-    raise RuntimeError(
-        "全モデルにおいてAPI一時エラー（混雑）のため記事生成に失敗しました。"
-    )
+    raise RuntimeError("API一時エラーのため記事生成に失敗しました。")
 
 # --- 3. Markdown記事をリポジトリへ新規コミット ---
 now_utc = datetime.now(timezone.utc)
