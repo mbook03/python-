@@ -1,13 +1,12 @@
+import base64
+from collections import Counter
+from datetime import datetime, timezone
 import os
 import re
-import time
-import base64
-from datetime import datetime, timezone
-from collections import Counter
-import markdown　
-import requests
 from google import genai
 from google.cloud import bigquery
+import markdown
+import requests
 
 REPO_OWNER = "mbook03"
 REPO_NAME = "python-"
