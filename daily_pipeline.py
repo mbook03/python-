@@ -3,6 +3,7 @@ from collections import Counter
 from datetime import datetime, timezone
 import os
 import re
+import time
 from google import genai
 from google.cloud import bigquery
 import markdown
@@ -50,10 +51,22 @@ LIMIT 1
 """
 try:
     df_top = bq_client.query(query).to_dataframe()
-    top_post = df_top.iloc[0] if len(df_top) > 0 else {"title": "データ分析", "content": "データ 経済 マネー 米国 インフラ", "char_count": 3000}
+    top_post = (
+        df_top.iloc[0]
+        if len(df_top) > 0
+        else {
+            "title": "データ分析",
+            "content": "データ 経済 マネー 米国 インフラ",
+            "char_count": 3000,
+        }
+    )
 except Exception as e:
     print(f"BigQueryクエリ警告: {e}")
-    top_post = {"title": "データ分析", "content": "データ 経済 マネー 米国 インフラ", "char_count": 3000}
+    top_post = {
+        "title": "データ分析",
+        "content": "データ 経済 マネー 米国 インフラ",
+        "char_count": 3000,
+    }
 
 # キーワード抽出
 text = str(top_post["content"])
@@ -64,7 +77,7 @@ top_keywords = [w[0] for w in Counter(filtered_words).most_common(5)]
 if not top_keywords:
     top_keywords = ["経済", "テクノロジー", "マネー"]
 
-# --- 2. Gemini API で新着記事を執筆（503対策：モデル自動切替＋リトライ） ---
+# --- 2. Gemini API で新着記事を執筆（混雑リトライ対応） ---
 ai_client = genai.Client(api_key=GEMINI_API_KEY)
 prompt = f"""
 あなたはWebマーケティングとSEOに精通した経済・テックブロガーです。
@@ -79,17 +92,14 @@ prompt = f"""
 - 読者を飽きさせないように適宜リストや強調を使用
 """
 
-candidate_models = ["gemini-3.6-flash", "gemini-2.5-flash", "gemini-2.0-flash"]
+candidate_models = ["gemini-2.5-flash", "gemini-2.0-flash"]
 article_md = None
 
 for m in candidate_models:
     for attempt in range(1, 3):
         try:
             print(f"モデル '{m}' 呼び出し試行 {attempt}/2...")
-            res = ai_client.models.generate_content(
-                model=m,
-                contents=prompt
-            )
+            res = ai_client.models.generate_content(model=m, contents=prompt)
             article_md = res.text
             print(f"記事生成成功！（使用モデル: {m}）")
             break
@@ -100,14 +110,18 @@ for m in candidate_models:
         break
 
 if not article_md:
-    raise RuntimeError("全モデルにおいてAPI一時エラー（混雑）のため記事生成に失敗しました。")
+    raise RuntimeError(
+        "全モデルにおいてAPI一時エラー（混雑）のため記事生成に失敗しました。"
+    )
 
 # --- 3. Markdown記事をリポジトリへ新規コミット ---
 now_utc = datetime.now(timezone.utc)
 date_str = now_utc.strftime("%Y%m%d")
 file_name = f"post_{date_str}.md"
 
-file_url = f"https://api.github.com/repos/{REPO_OWNER}/{REPO_NAME}/contents/{file_name}"
+file_url = (
+    f"https://api.github.com/repos/{REPO_OWNER}/{REPO_NAME}/contents/{file_name}"
+)
 get_res = requests.get(file_url, headers=headers)
 payload = {
     "message": f"feat: daily auto post {file_name}",
