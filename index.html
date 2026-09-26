@@ -152,13 +152,20 @@
   </header>
 
   <div class="container">
+    
   <aside class="sidebar">
       <div class="sidebar-title">過去の日記・レポート</div>
-      
+      <!-- ★追加する9月26日分（activeを付ける） -->
+      <div class="post-item">
+        <span class="post-date">09月26日（土）</span>
+        <button id="btn-0926" class="sidebar-btn active" onclick="switchPost('0926')">
+          【覇権を狙う米国データセンター】米国「データセンター」インフラ投資に巨額マネーが殺到する理由
+        </button>
+      </div>
       <!-- ★追加した9月24日分（activeを付ける） -->
       <div class="post-item">
         <span class="post-date">09月24日（木）</span>
-        <button id="btn-0924" class="sidebar-btn active" onclick="switchPost('0924')">
+       <button id="btn-0924" class="sidebar-btn" onclick="switchPost('0924')">
           【AIバブルの真の勝者は？】米国データセンターに群がるグローバルマネーと投資戦略
         </button>
       </div>
@@ -178,13 +185,14 @@
         </button>
       </div>
     </aside>
-
+　　　
     <main class="content">
       <!-- 9月24日の記事パネル -->
      <!-- 9月24日の記事パネル -->
       <article id="panel-0924" class="post-panel active">
         <div class="article-header">
           <span class="date-badge">09月24日（木）</span>
+          
         </div>
         <h1>【AIバブルの真の勝者は？】米国データセンターに群がるグローバルマネーと投資戦略</h1>
         
