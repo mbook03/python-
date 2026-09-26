@@ -72,7 +72,7 @@ if not top_keywords:
 print(f"抽出キーワード: {', '.join(top_keywords)}")
 
 # ---------------------------------------------------------
-# 2. Gemini API で本日の記事を執筆（503対策：モデル自動切替＋リトライ）
+# 2. Gemini API で本日の記事を執筆（現行モデル候補でリトライ）
 # ---------------------------------------------------------
 ai_client = genai.Client(api_key=GEMINI_API_KEY)
 prompt = f"""
@@ -89,14 +89,14 @@ prompt = f"""
 - 結びとして将来の展望や課題を整理
 """
 
-# 混雑時に順に試行するモデル候補
-candidate_models = ["gemini-3.8-flash", "gemini-2.5-flash", "gemini-2.0-flash"]
+# 提供中の現行モデル候補（2.5や2.0などの廃止モデルを除外）
+candidate_models = ["gemini-3.8-flash", "gemini-3.8-flash-lite", "gemini-3.5-flash"]
 article_md = None
 
 for m in candidate_models:
-    for attempt in range(1, 3):
+    for attempt in range(1, 4):
         try:
-            print(f"モデル '{m}' で記事生成を試行中 (試行 {attempt}/2)...")
+            print(f"モデル '{m}' で記事生成中 (試行 {attempt}/3)...")
             res = ai_client.models.generate_content(
                 model=m,
                 contents=prompt
@@ -105,13 +105,13 @@ for m in candidate_models:
             print(f"✅ 記事生成に成功しました（使用モデル: {m}）")
             break
         except Exception as e:
-            print(f"⚠️ モデル '{m}' (試行 {attempt}) 待機後に再試行します: {e}")
-            time.sleep(5)
+            print(f"⚠️ モデル '{m}' エラー: {e}")
+            time.sleep(attempt * 6)  # 混雑時は待機時間を延長
     if article_md:
         break
 
 if not article_md:
-    raise RuntimeError("全モデルでAPI混雑が発生したため記事生成に失敗しました。")
+    raise RuntimeError("全モデルで生成に失敗しました。")
 
 # タイトル抽出
 title = "新着経済レポート"
@@ -189,7 +189,7 @@ def push_to_github(path, content_str, commit_msg):
 push_to_github(post_file_path, post_full_html, f"feat: create {post_file_path}")
 
 # ---------------------------------------------------------
-# 4. posts/ フォルダ内の全記事を取得して index.html を自動再構築
+# 4. posts/ フォルダ内の全記事を取得して index.html を自動更新
 # ---------------------------------------------------------
 posts_api_url = f"https://api.github.com/repos/{REPO_OWNER}/{REPO_NAME}/contents/posts"
 posts_res = requests.get(posts_api_url, headers=headers)
