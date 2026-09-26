@@ -1,5 +1,6 @@
 import os
 import re
+import time
 import base64
 from datetime import datetime, timezone
 from collections import Counter
@@ -71,7 +72,7 @@ if not top_keywords:
 print(f"抽出キーワード: {', '.join(top_keywords)}")
 
 # ---------------------------------------------------------
-# 2. Gemini API で本日の記事を生成
+# 2. Gemini API で本日の記事を執筆（503対策：モデル自動切替＋リトライ）
 # ---------------------------------------------------------
 ai_client = genai.Client(api_key=GEMINI_API_KEY)
 prompt = f"""
@@ -88,11 +89,29 @@ prompt = f"""
 - 結びとして将来の展望や課題を整理
 """
 
-res = ai_client.models.generate_content(
-    model="gemini-3.8-flash",
-    contents=prompt
-)
-article_md = res.text
+# 混雑時に順に試行するモデル候補
+candidate_models = ["gemini-3.8-flash", "gemini-2.5-flash", "gemini-2.0-flash"]
+article_md = None
+
+for m in candidate_models:
+    for attempt in range(1, 3):
+        try:
+            print(f"モデル '{m}' で記事生成を試行中 (試行 {attempt}/2)...")
+            res = ai_client.models.generate_content(
+                model=m,
+                contents=prompt
+            )
+            article_md = res.text
+            print(f"✅ 記事生成に成功しました（使用モデル: {m}）")
+            break
+        except Exception as e:
+            print(f"⚠️ モデル '{m}' (試行 {attempt}) 待機後に再試行します: {e}")
+            time.sleep(5)
+    if article_md:
+        break
+
+if not article_md:
+    raise RuntimeError("全モデルでAPI混雑が発生したため記事生成に失敗しました。")
 
 # タイトル抽出
 title = "新着経済レポート"
@@ -155,7 +174,6 @@ post_full_html = f"""<!DOCTYPE html>
 </html>
 """
 
-# GitHub APIで posts/ にプッシュ
 def push_to_github(path, content_str, commit_msg):
     url = f"https://api.github.com/repos/{REPO_OWNER}/{REPO_NAME}/contents/{path}"
     get_res = requests.get(url, headers=headers)
@@ -182,7 +200,6 @@ if posts_res.status_code == 200:
             all_post_files.append(item["name"])
 all_post_files.sort(reverse=True)
 
-# サイドバーリンク一覧を生成
 sidebar_items = []
 for fname in all_post_files:
     d_match = re.search(r"post_(\d{4})(\d{2})(\d{2})\.html", fname)
@@ -198,7 +215,6 @@ for fname in all_post_files:
     """)
 sidebar_html = "\n".join(sidebar_items)
 
-# トップページ用 index.html テンプレート
 new_index_html = f"""<!DOCTYPE html>
 <html lang="ja">
 <head>
