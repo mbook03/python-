@@ -10,7 +10,7 @@ from google.cloud import bigquery
 import markdown
 import requests
 
-# 1. 認証と設定
+# 1. 認証と基本設定
 REPO_OWNER = "mbook03"
 REPO_NAME = "python-"
 GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN")
@@ -73,11 +73,17 @@ else:
         df_top = bq_client.query(query).to_dataframe()
         top_post = df_top.iloc[0] if len(df_top) > 0 else None
     except Exception as e:
+        print(f"BigQueryクエリ警告: {e}")
         top_post = None
 
     if top_post is None:
-        top_post = {"title": "データ分析レポート", "content": "データ 経済 マネー 米国 インフラ データセンター 電力", "char_count": 3000}
+        top_post = {
+            "title": "データ分析レポート",
+            "content": "データ 経済 マネー 米国 インフラ データセンター 電力",
+            "char_count": 3000,
+        }
 
+    # 3. キーワード抽出
     text = str(top_post["content"])
     keywords = re.findall(r"[\u4e00-\u9fa5]{2,}|[ァ-ヴー]{2,}|[A-Za-z]{3,}", text)
     stopwords = {"データ", "レポート", "分析", "これ", "それ", "ため", "よう", "こと"}
@@ -86,6 +92,7 @@ else:
     if not top_keywords:
         top_keywords = ["経済", "テクノロジー", "インフラ"]
 
+    # 4. Gemini API による執筆（混雑時のモデル自動フォールバック対応）
     ai_client = genai.Client(api_key=GEMINI_API_KEY)
     prompt = f"""
     あなたはWebマーケティングとSEOに精通した経済・テックブロガーです。
@@ -112,12 +119,14 @@ else:
     if not article_md:
         raise RuntimeError("全モデルで生成に失敗しました。")
 
+    # タイトル抽出
     title = "新着記事"
     for line in article_md.splitlines():
         if line.startswith("# "):
             title = line.replace("# ", "").strip()
             break
 
+    # 5. 単体HTML生成
     body_html = markdown.markdown(article_md, extensions=["extra", "codehilite"])
     single_page_html = f"""<!DOCTYPE html>
 <html lang="ja">
@@ -152,7 +161,7 @@ else:
     }
     requests.put(put_url, headers=headers, json=put_payload)
 
-# --- 3. index.html のサイドバーと最新表示を安全に再構築 ---
+# --- 6. index.html のサイドバーと最新表示を安全に再構築 ---
 posts_api_url = f"https://api.github.com/repos/{REPO_OWNER}/{REPO_NAME}/contents/posts"
 posts_res = requests.get(posts_api_url, headers=headers)
 
